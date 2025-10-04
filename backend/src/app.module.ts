@@ -4,6 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FloodMark } from './database/entities/flood_marks/entities/flood_mark.entity';
 import { Post } from './database/entities/posts/entities/post.entity';
 import { Report } from './database/entities/reports/entities/report.entity';
+import { TasksService } from './tasks/tasks.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { FloodMarksModule } from './database/entities/flood_marks/flood_marks.module';
+import { ReportsModule } from './database/entities/reports/reports.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -29,8 +34,12 @@ import { Report } from './database/entities/reports/entities/report.entity';
         synchronize: true, 
       }),
     }),
+    ScheduleModule.forRoot(), // Initialize the scheduler
+    FloodMarksModule,
+    ReportsModule,
+    TasksModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [TasksService],
 })
 export class AppModule {}
