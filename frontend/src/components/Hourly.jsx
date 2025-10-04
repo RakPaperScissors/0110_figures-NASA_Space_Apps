@@ -26,7 +26,7 @@ const Hourly = ({ data }) => {
   };
 
   return (
-    <div className="overflow-x-auto scrollbar-hide bg-white rounded-2xl ">
+    <div className="overflow-x-auto scrollbar-hide bg-[#F2F2F2] rounded-2xl ">
       <div className="flex gap-5 w-max px-4 py-4 snap-x snap-mandatory">
         {data.map((hour, index) => (
           <div

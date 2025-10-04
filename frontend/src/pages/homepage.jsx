@@ -4,7 +4,7 @@ import Hourly from "../components/Hourly";
 
 const Homepage = () => {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full flex flex-col bg-[#FFFFFF]">
       <CurrentForecast />
       <Hourly />
     </div>
