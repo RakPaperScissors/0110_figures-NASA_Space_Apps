@@ -33,7 +33,12 @@ fetch(nowApiUrl, {
   return response.json();
 })
 .then(data => {
-  console.log('Current Weather Data (9 parameters):');
+  const temperature = data.data.find(p => p.parameter === 't_2m:C').coordinates[0].dates[0].value;
+  const humidity = data.data.find(p => p.parameter === 'relative_humidity_2m:p').coordinates[0].dates[0].value;
+  const feelsLikeTemp = calculateHeatIndex(temperature, humidity);
+  data.calculated_feels_like_C = feelsLikeTemp;
+
+  console.log('Current Weather Data (with calculated Feels Like):');
   console.log(JSON.stringify(data, null, 2));
 })
 .catch(error => {
