@@ -6,7 +6,7 @@ import { Report } from './entities/report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { FloodMark } from '../flood_marks/entities/flood_mark.entity';
 
-const FAKE_REPORT_THRESHOLD = 5;
+const FAKE_REPORT_THRESHOLD = 3;
 const TRUST_SCORE_PENALTY = 25;
 const DELETION_TRUST_THRESHOLD = 50;
 
@@ -16,6 +16,7 @@ export class ReportsService {
     constructor(
         @InjectRepository(Post) private readonly postRepository: Repository<Post>,
         @InjectRepository(Report) private readonly reportRepository: Repository<Report>,
+        @InjectRepository(FloodMark) private readonly floodMarkRepository: Repository<FloodMark>,
         private readonly dataSource: DataSource,
     ) {}
     
@@ -24,7 +25,7 @@ export class ReportsService {
         return this.dataSource.transaction(async manager => {
             const post = await manager.findOne(Post, {
                 where: { id: postId },
-                relations: ['FloodMark'], // Load the parent floodMark
+                relations: ['floodMark'], // Load the parent floodMark
             });
             
             if (!post) {
@@ -44,18 +45,34 @@ export class ReportsService {
             // Increment the fake report count on the post
             post.fakeReportCount = (post.fakeReportCount || 0) + 1;
             
-            // Check if the report count exceeds the threshold
+            // Check if the report count reaches the threshold
             if (post.fakeReportCount >= FAKE_REPORT_THRESHOLD) {
                 const floodMark = post.floodMark;
-                floodMark.trustScore -= TRUST_SCORE_PENALTY;
-
-                // If trust score is too low, delete the whole mark
-                if (floodMark.trustScore < DELETION_TRUST_THRESHOLD) {
-                    await manager.remove(floodMark); // This will cascade delete posts and reports
-                    return { message: `Flood mark ${floodMark.id} deleted due to low trust score.` };
-                } else {
-                    await manager.save(floodMark);
+                const floodMarkId = floodMark.id;
+                
+                // Delete the post that reached the threshold
+                await manager.remove(post);
+                
+                // Check if the flood mark has any remaining posts
+                const remainingPosts = await manager.count(Post, {
+                    where: { floodMarkId }
+                });
+                
+                // If no posts remain, delete the flood mark
+                if (remainingPosts === 0) {
+                    await manager.remove(floodMark);
+                    return { 
+                        message: `Post ${postId} and flood mark ${floodMarkId} deleted due to reaching report threshold with no remaining posts.`,
+                        postDeleted: true,
+                        floodMarkDeleted: true
+                    };
                 }
+                
+                return { 
+                    message: `Post ${postId} deleted due to reaching ${FAKE_REPORT_THRESHOLD} reports.`,
+                    postDeleted: true,
+                    floodMarkDeleted: false
+                };
             }
             
             await manager.save(post);
