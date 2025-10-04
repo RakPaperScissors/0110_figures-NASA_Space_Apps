@@ -1,26 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { FloodMark } from '../flood_marks/entities/flood_mark.entity';
+import { Post } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
-  }
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+    @InjectRepository(FloodMark)
+    private readonly floodMarkRepository: Repository<FloodMark>,
+    private readonly dataSource: DataSource,
+  ) {}
 
-  findAll() {
-    return `This action returns all posts`;
-  }
+  async create(markId: string, dto: CreatePostDto, deviceId: string): Promise<Post> {
+    return this.dataSource.transaction(async (manager) => {
+      const floodMark = await manager.findOneBy(FloodMark, { id: markId });
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
-  }
+      if (!floodMark) {
+        throw new NotFoundException(`FloodMark with ID ${markId} not found`);
+      }
+      floodMark.updatedAt = new Date();
+      await manager.save(floodMark);
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
-  }
+      const newPost = manager.create(Post, {
+        ...dto,
+        deviceId,
+        floodMark,
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+      return manager.save(newPost);
+    });
   }
 }

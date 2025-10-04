@@ -24,7 +24,7 @@ export class ReportsService {
         return this.dataSource.transaction(async manager => {
             const post = await manager.findOne(Post, {
                 where: { id: postId },
-                relations: ['floodMark'], // Load the parent floodMark
+                relations: ['FloodMark'], // Load the parent floodMark
             });
             
             if (!post) {

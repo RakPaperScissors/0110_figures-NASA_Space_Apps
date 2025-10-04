@@ -4,11 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FloodMark } from './database/entities/flood_marks/entities/flood_mark.entity';
 import { Post } from './database/entities/posts/entities/post.entity';
 import { Report } from './database/entities/reports/entities/report.entity';
-import { TasksService } from './tasks/tasks.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FloodMarksModule } from './database/entities/flood_marks/flood_marks.module';
 import { ReportsModule } from './database/entities/reports/reports.module';
 import { TasksModule } from './tasks/tasks.module';
+import { PostsModule } from './database/entities/posts/posts.module';
 
 @Module({
   imports: [
@@ -38,8 +38,9 @@ import { TasksModule } from './tasks/tasks.module';
     FloodMarksModule,
     ReportsModule,
     TasksModule,
+    PostsModule
   ],
   controllers: [],
-  providers: [TasksService],
+  providers: [],
 })
 export class AppModule {}

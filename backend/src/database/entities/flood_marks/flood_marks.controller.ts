@@ -2,7 +2,6 @@ import { Controller, Post, Body, Get, Param, ParseUUIDPipe, Patch } from '@nestj
 import { FloodMarksService } from './flood_marks.service';
 import { CreateFloodMarkDto } from './dto/create-flood_mark.dto';
 import { DeviceId } from 'src/common/decorators/device-id.decorator';
-import { CreatePostDto } from '../posts/dto/create-post.dto';
 
 @Controller('marks')
 export class FloodMarksController {
@@ -11,7 +10,7 @@ export class FloodMarksController {
   @Post()
   create(
     @Body() createFloodMarkDto: CreateFloodMarkDto,
-    @DeviceId() deviceId: string,
+    @DeviceId() deviceId:string,
   ) {
     return this.floodMarksService.create(createFloodMarkDto, deviceId);
   }
@@ -21,15 +20,6 @@ export class FloodMarksController {
     return this.floodMarksService.findActive();
   }
 
-  @Post(':id/posts')
-  addPost(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() createPostDto: CreatePostDto,
-    @DeviceId() deviceId: string,
-  ) {
-    return this.floodMarksService.addPost(id, createPostDto, deviceId);
-  }
-  
   @Patch(':id/refresh')
   refresh(
     @Param('id', ParseUUIDPipe) id: string,

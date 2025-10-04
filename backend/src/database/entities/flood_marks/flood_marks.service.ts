@@ -61,30 +61,6 @@ export class FloodMarksService {
       await queryRunner.release();
     }
   }
-
-  async addPost(markId: string, dto: CreatePostDto, deviceId: string): Promise<Post> {
-    const floodMark = await this.floodMarksRepository.findOneBy({ id: markId });
-    if (!floodMark) {
-      throw new NotFoundException(`FloodMark with ID ${markId} not found`);
-    }
-
-    // Refresh the mark's updatedAt timestamp
-    floodMark.updatedAt = new Date();
-    
-    const post = this.dataSource.manager.create(Post, {
-      ...dto,
-      deviceId,
-      floodMark,
-    });
-    
-    // Save both the updated mark and the new post in a transaction
-    await this.dataSource.transaction(async manager => {
-        await manager.save(post);
-        await manager.save(floodMark);
-    });
-    
-    return post;
-  }
   
   async refresh(id: string): Promise<FloodMark> {
     const mark = await this.floodMarksRepository.findOneBy({ id });
