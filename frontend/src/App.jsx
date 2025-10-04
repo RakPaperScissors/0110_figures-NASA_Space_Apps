@@ -35,7 +35,7 @@ function App() {
       <section>
         <h3>Next Few Hours</h3>
         <ul>
-          {weatherByHour?.slice(0, 6).map((hour, i) => (
+          {weatherByHour?.map((hour, i) => (
             <li key={i}>
               {new Date(hour.time).toLocaleTimeString([], {
                 hour: "2-digit",
