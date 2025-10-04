@@ -11,17 +11,17 @@ const Hourly = ({ data }) => {
   const getWeatherIcon = (condition) => {
     switch (condition) {
       case "sunny":
-        return <Sun className="w-7 h-7 text-yellow-500" />;
+        return <Sun className="w-6 h-6 text-yellow-500" />;
       case "cloudy":
-        return <Cloud className="w-7 h-7 text-gray-400" />;
+        return <Cloud className="w-6 h-6 text-gray-400" />;
       case "rain":
-        return <CloudRain className="w-7 h-7 text-blue-500" />;
+        return <CloudRain className="w-6 h-6 text-blue-500" />;
       case "snow":
-        return <CloudSnow className="w-7 h-7 text-sky-400" />;
+        return <CloudSnow className="w-6 h-6 text-sky-400" />;
       case "storm":
-        return <CloudLightning className="w-7 h-7 text-purple-500" />;
+        return <CloudLightning className="w-6 h-6 text-purple-500" />;
       default:
-        return <Cloud className="w-7 h-7 text-gray-400" />;
+        return <Cloud className="w-6 h-6 text-gray-400" />;
     }
   };
 
