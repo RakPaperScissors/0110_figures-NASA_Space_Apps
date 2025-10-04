@@ -8,7 +8,7 @@ function App() {
     <>
       <div className="flex justify-center items-center bg-gray-900 h-screen">
         {/* PHONE CONTAINER */}
-        <div className="w-[390px] h-screen bg-gradient-to-b from-blue-400 to-blue-700 text-white font-sans overflow-y-auto">
+        <div className="w-[390px] h-screen text-white font-sans overflow-y-auto scrollbar-hide">
           <Homepage />
         </div>
       </div>
