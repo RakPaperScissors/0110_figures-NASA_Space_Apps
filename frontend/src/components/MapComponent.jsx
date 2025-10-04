@@ -10,6 +10,18 @@ import MapClickHandler from './MapClickHandler';
 import AddMarkForm from './AddMarkForm';
 import UserLocationMarker from './UserLocationMarker';
 
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
+
+let DefaultIcon = L.icon({
+    ...L.Icon.Default.prototype.options,
+    iconUrl: icon,
+    iconRetinaUrl: iconRetina,
+    shadowUrl: iconShadow
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https-cdnjs-cloudflare-ajax-libs-leaflet-1-7-1-images-marker-icon-2x.png'.replace('https-', 'https://'),
@@ -21,15 +33,9 @@ function MapComponent() {
   const position = [29.9511, -90.0715];
   const { refetch: refetchFloodMarks } = useFloodMarks();
   const [newMarkPosition, setNewMarkPosition] = useState(null);
-  const handleMapClick = useCallback((latlng) => {
-    setNewMarkPosition(latlng);
-  }, []);
-  const handleCloseForm = () => {
-    setNewMarkPosition(null);
-  };
-  const handleMarkAdded = () => {
-    refetchFloodMarks();
-  };
+  const handleMapClick = useCallback((latlng) => { setNewMarkPosition(latlng); }, []);
+  const handleCloseForm = () => { setNewMarkPosition(null); };
+  const handleMarkAdded = () => { refetchFloodMarks(); };
 
   const today = new Date().toISOString().split('T')[0];
   const nasaGibsUrl = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/${today}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`;
