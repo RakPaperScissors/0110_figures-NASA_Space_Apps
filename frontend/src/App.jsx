@@ -41,7 +41,7 @@ function App() {
           <p>Symbol: {day.weatherSymbol}°C</p>
           <p>Minimum Temperature: {day.minTemperature}</p>   
           <p>Maximum Temperature: {day.maxTemperature}</p>
-          <p>Rain: {day.precipitaiton}</p>
+          <p>Rain: {day.precipitation}</p>
         </li>
       ))}
     </>
