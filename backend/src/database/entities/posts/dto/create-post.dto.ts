@@ -1,9 +1,15 @@
-import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsEnum, IsLatitude, IsLongitude, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
+import { SeverityLevel } from 'src/database/enums/severity-level.enum';
 
 export class CreatePostDto {
-  @IsUrl()
-  @IsNotEmpty()
-  imageUrl: string;
+  @IsLatitude()
+  latitude: number;
+
+  @IsLongitude()
+  longitude: number;
+
+  @IsEnum(SeverityLevel)
+  severity: SeverityLevel;
 
   @IsOptional()
   @IsString()

@@ -16,7 +16,7 @@ export class FloodMarksService {
     private readonly dataSource: DataSource, // For transactions
   ) {}
 
-  async create(dto: CreateFloodMarkDto, deviceId: string): Promise<FloodMark> {
+  async create(dto: CreateFloodMarkDto, imageBuffer: Buffer, deviceId: string, username?: string): Promise<FloodMark> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -37,9 +37,10 @@ export class FloodMarksService {
 
       const post = queryRunner.manager.create(Post, {
         deviceId,
-        imageUrl: dto.imageUrl,
         notes: dto.notes,
         floodMark: savedMark,
+        image: imageBuffer,
+        username: username,
       });
 
       await queryRunner.manager.save(post);
