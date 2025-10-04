@@ -13,19 +13,24 @@ export function useCurrentWeather() {
     const [locationUsed, setLocationUsed] = useState(defaultLocation.name);
 
     useEffect(() => {
-        let latitude, longitude;
+        if (!coordinates && !geoError) return;
+        let latitude, longitude, locationLabel;
 
         if(coordinates) {
             latitude = coordinates.latitude;
             longitude = coordinates.longitude;
-            setLocationUsed("Your location");
-        } else if(geoError) {
+            if (usingDefault) {
+                locationLabel = defaultLocation.name;
+            } else {
+                locationLabel = "Your location";
+            }
+        } else {
             latitude = defaultLocation.latitude;
             longitude = defaultLocation.longitude;
-            setLocationUsed(defaultLocation.name);
-        } else {
-            return;
-        }
+            locationLabel = defaultLocation.name;
+        } 
+
+        setLocationUsed(locationLabel);
 
         fetchCurrentWeather(latitude, longitude)
             .then(data => {
