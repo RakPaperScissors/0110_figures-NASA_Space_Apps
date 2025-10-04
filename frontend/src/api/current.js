@@ -1,7 +1,5 @@
-import 'dotenv/config';
-
-const username = process.env.VITE_API_USERNAME;
-const password = process.env.VITE_API_PASSWORD;
+const username = import.meta.env.VITE_API_USERNAME;
+const password = import.meta.env.VITE_API_PASSWORD;
 const latitude = '7.0647';
 const longitude = '125.6088';
 
@@ -37,30 +35,41 @@ const nowParameters = [
 ].join(',');
 
 const nowApiUrl = `https://api.meteomatics.com/now/${nowParameters}/${latitude},${longitude}/json`;
-const auth = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
+const auth = 'Basic ' + btoa(`${username}:${password}`);
 
-fetch(nowApiUrl, {
-  method: 'GET',
-  headers: {
-    'Authorization': auth
+export async function fetchCurrentWeather() {
+  try {
+    const response = await fetch(nowApiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': auth
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    const tempParam = data.data.find(p => p.parameter === 't_2m:C');
+    const humidityParam = data.data.find(p => p.parameter === 'relative_humidity_2m:p');
+
+    const temperature = tempParam?.coordinates?.[0]?.dates?.[0]?.value;
+    const humidity = humidityParam?.coordinates?.[0]?.dates?.[0]?.value;
+
+    if (temperature == null || humidity == null) {
+      console.warn('Temperature or humidity missing in API response', { temperature, humidity });
+    }
+
+    const feelsLikeTemp = calculateHeatIndex(temperature ?? 0, humidity ?? 0);
+    data.calculated_feels_like_C = feelsLikeTemp;
+
+    console.log('Current Weather Data (with calculated Feels Like):');
+    console.log(JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    console.error('Error fetching current weather:', error);
+    throw error;
   }
-})
-.then(response => {
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
-  }
-  return response.json();
-})
-.then(data => {
-  const temperature = data.data.find(p => p.parameter === 't_2m:C').coordinates[0].dates[0].value;
-  const humidity = data.data.find(p => p.parameter === 'relative_humidity_2m:p').coordinates[0].dates[0].value;
-
-  const feelsLikeTemp = calculateHeatIndex(temperature, humidity);
-  data.calculated_feels_like_C = feelsLikeTemp;
-
-  console.log('Current Weather Data (with calculated Feels Like):');
-  console.log(JSON.stringify(data, null, 2));
-})
-.catch(error => {
-  console.error('Error fetching current weather:', error);
-});
+}
