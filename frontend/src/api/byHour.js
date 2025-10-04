@@ -1,7 +1,5 @@
-import 'dotenv/config'; // Loads environment variables from .env file
-
-const username = process.env.VITE_API_USERNAME;
-const password = process.env.VITE_API_PASSWORD;
+const username = import.meta.env.VITE_API_USERNAME;
+const password = import.meta.env.VITE_API_PASSWORD;
 const latitude = '7.0647';
 const longitude = '125.6088';
 
@@ -25,24 +23,59 @@ const hourlyParameters = [
 const hourlyApiUrl = `https://api.meteomatics.com/${timeRange}/${hourlyParameters}/${latitude},${longitude}/json`;
 
 // Use Buffer for Node.js instead of btoa
-const auth = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
+const auth = 'Basic ' + btoa(`${username}:${password}`);
 
-fetch(hourlyApiUrl, {
-  method: 'GET',
-  headers: {
-    'Authorization': auth
+export async function fetchWeatherByHour() {
+  try {
+    const response = await fetch(hourlyApiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': auth
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const rawData = await response.json();
+
+    const times = rawData.data[0].coordinates[0].dates.map(d => d.date);
+    const hourlyData = times.map((time, index) => {
+      const object = { time };
+
+      rawData.data.forEach(param => {
+        const value = param.coordinates[0].dates[index].value;
+        switch(param.parameter) {
+          case 't_2m:C':
+            object.temperature = value;
+            break;
+          case 'relative_humidity_2m:p':
+            object.humidity = value;
+            break;
+          case 'wind_speed_10m:ms':
+            object.windSpeed = value;
+            break;
+          case 'precip_1h:mm':
+            object.precipitation = value;
+            break;
+          case 'uv:idx':
+            object.uv = value;
+            break;
+          case 'msl_pressure:hPa':
+            object.pressure = value;
+            break;
+          case 'weather_symbol_1h:idx':
+            object.weatherSymbol = value;
+            break;
+        }
+      });
+
+      return object;
+    })
+    console.log('Hourly Forecast Data: ', hourlyData);
+    return hourlyData;
+  } catch (error) {
+    console.error('Error fetching hourly forecast:', error);
+    throw error;
   }
-})
-.then(response => {
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  return response.json();
-})
-.then(data => {
-  // Pretty-print the full JSON object to your terminal
-  console.log('Hourly Forecast Data:', JSON.stringify(data, null, 2));
-})
-.catch(error => {
-  console.error('Error fetching hourly forecast:', error);
-});
+  
+}

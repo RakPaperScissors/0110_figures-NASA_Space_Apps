@@ -16,5 +16,5 @@ export function useCurrentWeather() {
             });
     }, []);
 
-    return {currentWeather, setCurrentWeather};
+    return {currentWeather, setCurrentWeather, error};
 }
