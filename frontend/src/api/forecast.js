@@ -4,7 +4,7 @@ const latitude = '7.0647';
 const longitude = '125.6088';
 
 const startDate = new Date();
-startDate.setUTCHours(0, 0, 0, 0);
+startDate.setHours(0, 0, 0, 0);
 const endDate = new Date(startDate);
 endDate.setDate(startDate.getDate() + 7);
 const startTime = startDate.toISOString();
