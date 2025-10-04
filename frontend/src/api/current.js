@@ -7,7 +7,7 @@ const longitude = '125.6088';
 
 const nowParameters = [
   't_2m:C',
-  'feels_like_2m:C',
+  // 'feels_like_2m:C',
   'weather_symbol_1h:idx',
   'relative_humidity_2m:p',
   'wind_speed_10m:ms',
