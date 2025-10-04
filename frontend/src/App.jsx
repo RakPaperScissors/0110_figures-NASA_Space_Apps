@@ -5,46 +5,63 @@ import './App.css'
 import { useCurrentWeather } from './hooks/useCurrent'
 import { useWeatherByHour } from './hooks/useByHour'
 import { useForecast } from './hooks/useForecast'
+import { useGeolocation } from './hooks/useGeolocation'
 
 function App() {
-  const {currentWeather, error: currentWeatherError} = useCurrentWeather();
+  const { coordinates, error: geoError } = useGeolocation();
+  const {currentWeather, error: currentWeatherError, locationUsed, usingDefault} = useCurrentWeather();
   const {weatherByHour, error: weatherByHourError} = useWeatherByHour();
   const {forecast, error: forecastError} = useForecast();
 
-  if(currentWeatherError || weatherByHourError || forecastError) return <p>Error: {error}</p>;
+  // if (geoError) return <p>{geoError}</p>;
+  if (!coordinates) return <p>Getting your location...</p>;
+  // if(currentWeatherError || weatherByHourError || forecastError) return <p>{currentWeatherError}</p>;
   if(!currentWeather) return <p>loading...</p>;
 
   return (
-    <>
-      <h2>hello weather app user! This is a test.</h2>
+    <div className="app-container">
+      <h2>Weather App 🌦️</h2>
+      <p>
+        Showing weather for: <strong>{locationUsed}</strong>{" "}
+        {usingDefault && <span>(default)</span>}
+      </p>
+      {geoError && <p style={{ color: "orange" }}>{geoError}</p>}
 
-      <h3>Current Weather right now:</h3>
-      <p>Temperature: {currentWeather.calculated_feels_like_C} °C</p>
+      <section>
+        <h3>Current Weather</h3>
+        <p>Temperature: {currentWeather?.calculated_feels_like_C}°C</p>
+      </section>
 
-      <h3>Weather in a few hours:</h3>
-      {weatherByHour.slice(0, 8).map((hour, index) => (
-        <li key={index}>
-          {new Date(hour.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} --
-          {hour.temperature} °C, {hour.humidity}% humidity, wind {hour.windSpeed} m/s
-        </li>
-      ))}
+      <section>
+        <h3>Next Few Hours</h3>
+        <ul>
+          {weatherByHour?.slice(0, 6).map((hour, i) => (
+            <li key={i}>
+              {new Date(hour.time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })} — {hour.temperature}°C, {hour.humidity}% humidity
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <h3>Weather for the next few days:</h3>
-      {forecast.map((day, index) => (
-        <li key={index}>
-          {new Date(day.day).toLocaleDateString(undefined, {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
-          })}
-
-          <p>Symbol: {day.weatherSymbol}°C</p>
-          <p>Minimum Temperature: {day.minTemperature}</p>   
-          <p>Maximum Temperature: {day.maxTemperature}</p>
-          <p>Rain: {day.precipitation}</p>
-        </li>
-      ))}
-    </>
+      <section>
+        <h3>Next Few Days</h3>
+        <ul>
+          {forecast?.map((day, i) => (
+            <li key={i}>
+              {new Date(day.day).toLocaleDateString(undefined, {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              })}
+              — {day.minTemperature}°C / {day.maxTemperature}°C
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   )
 }
 

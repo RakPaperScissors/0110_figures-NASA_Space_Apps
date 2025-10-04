@@ -1,7 +1,7 @@
 const username = import.meta.env.VITE_API_USERNAME;
 const password = import.meta.env.VITE_API_PASSWORD;
-const latitude = '7.0647';
-const longitude = '125.6088';
+// const latitude = '7.0647';
+// const longitude = '125.6088';
 
 function calculateHeatIndex(temperatureC, relativeHumidity) {
   if (temperatureC <= 26.7) {
@@ -22,7 +22,8 @@ function calculateHeatIndex(temperatureC, relativeHumidity) {
   return parseFloat(heatIndexC.toFixed(1));
 }
 
-const nowParameters = [
+export async function fetchCurrentWeather(latitude, longitude) {
+  const nowParameters = [
   't_2m:C',
   'weather_symbol_1h:idx',
   'relative_humidity_2m:p',
@@ -32,12 +33,11 @@ const nowParameters = [
   'sunrise:sql',
   'sunset:sql',
   'msl_pressure:hPa'
-].join(',');
+  ].join(',');
 
-const nowApiUrl = `https://api.meteomatics.com/now/${nowParameters}/${latitude},${longitude}/json`;
-const auth = 'Basic ' + btoa(`${username}:${password}`);
+  const nowApiUrl = `https://api.meteomatics.com/now/${nowParameters}/${latitude},${longitude}/json`;
+  const auth = 'Basic ' + btoa(`${username}:${password}`);
 
-export async function fetchCurrentWeather() {
   try {
     const response = await fetch(nowApiUrl, {
       method: 'GET',
