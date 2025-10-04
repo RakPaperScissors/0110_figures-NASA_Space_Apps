@@ -27,8 +27,11 @@ export class Post {
   @Column({ name: 'device_id', type: 'text' })
   deviceId: string;
 
-  @Column({ name: 'image_url', type: 'text' })
-  imageUrl: string;
+  @Column({ nullable: true })
+  username: string;
+
+  @Column({ type: 'bytea', nullable: true })
+  image: Buffer;
 
   @Column({ type: 'text', nullable: true })
   notes: string;

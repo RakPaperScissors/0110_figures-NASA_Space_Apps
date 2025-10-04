@@ -2,25 +2,35 @@ import React, { useState } from 'react';
 import { createFloodMark } from '../api/floodMarksApi';
 
 function AddMarkForm({ position, onClose, onMarkAdded }) {
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState(null);
   const [severity, setSeverity] = useState('low');
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+    if (!imageFile) {
+      setError("An image is required.");
+      setIsSubmitting(false);
+      return;
+    }
     try {
       const markData = {
         latitude: position.lat,
         longitude: position.lng,
-        imageUrl,
         severity,
         notes,
       };
-      await createFloodMark(markData);
+      await createFloodMark(markData, imageFile);
       onMarkAdded();
       onClose();
     } catch (err) {
@@ -35,8 +45,15 @@ function AddMarkForm({ position, onClose, onMarkAdded }) {
       <h3 className="text-xl font-bold mb-4">Report a New Flood</h3>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block mb-1 font-semibold">Image URL</label>
-          <input type="url" required value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full p-2 border rounded text-black"/>
+          <label className="block mb-1 font-semibold">Take or Upload Photo</label>
+          <input 
+            type="file" 
+            accept="image/*" 
+            capture="environment" 
+            required 
+            onChange={handleFileChange}
+            className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          />
         </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Severity</label>
