@@ -69,7 +69,12 @@ const Homepage = () => {
       <div className="flex justify-center mt-4">
         <button
           onClick={() => setIsMapOpen(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+          className="
+            px-6 py-2 rounded-full text-white font-medium 
+            bg-[#f2f2f2]/10 backdrop-blur-xl border border-white/20 
+            shadow-[0_2px_20px_rgba(0,0,0,0.08)] 
+            transition hover:bg-[#f2f2f2]/20
+          "
         >
           📍 Select Location
         </button>
@@ -77,20 +82,34 @@ const Homepage = () => {
 
       {/* 🪟 Modal popup */}
       {isMapOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-4 w-[90%] max-w-xl relative shadow-lg">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div
+            className="
+              bg-white rounded-2xl shadow-xl relative flex flex-col
+              w-full max-w-sm   /* limits modal to a nice size */
+              max-h-[85vh] overflow-hidden
+            "
+          >
             {/* Close button */}
             <button
               onClick={() => setIsMapOpen(false)}
-              className="absolute top-2 right-3 text-gray-500 hover:text-black text-lg font-bold"
+              className="absolute top-2 right-3 text-gray-500 hover:text-black text-2xl font-bold z-10"
             >
               ×
             </button>
 
-            <h2 className="text-center font-semibold mb-2">Select a location on the map</h2>
+            <h2 className="text-center text-lg font-semibold mt-4 mb-2 px-4">
+              Select a location on the map
+            </h2>
 
-            {/* 🗺️ Leaflet map */}
-            <div className="rounded overflow-hidden">
+            {/* Map container */}
+            <div
+              className="flex-1 overflow-hidden rounded-b-2xl"
+              style={{
+                height: "60vh",
+                minHeight: "300px",
+              }}
+            >
               <LocationPicker onLocationChange={handleLocationChange} />
             </div>
           </div>
