@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useMap } from 'react-leaflet';
-import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
-import 'leaflet-geosearch/dist/geosearch.css';
+import { useEffect } from "react";
+import { useMap } from "react-leaflet";
+import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
+import "leaflet-geosearch/dist/geosearch.css";
 
 const MapSearchControl = () => {
   const map = useMap();
@@ -11,7 +11,7 @@ const MapSearchControl = () => {
 
     const searchControl = new GeoSearchControl({
       provider: provider,
-      style: 'bar',
+      style: "bar",
       showMarker: true,
       showPopup: false,
       autoClose: true,
