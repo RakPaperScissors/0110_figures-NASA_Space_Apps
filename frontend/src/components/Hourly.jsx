@@ -5,40 +5,48 @@ import {
   CloudRain,
   CloudSnow,
   CloudLightning,
+  CloudFog,
 } from "lucide-react";
 import { useWeatherByHour } from "../hooks/useByHour";
 
 const Hourly = ({ data = [] }) => {
   const { weatherByHour, error } = useWeatherByHour();
+  console.log("Weather by hour sample:", weatherByHour?.[0]);
   
-  const getWeatherIcon = (condition) => {
+  const getWeatherCategory = (code) => {
+    const num = Number(code);
+    if (Number.isNaN(num)) return "unknown";
+    if ([1, 2].includes(num)) return "clear";
+    if ([3, 4].includes(num)) return "partly_cloudy";
+    if (num >= 5 && num <= 9) return "cloudy";
+    if ((num >= 10 && num <= 19) || (num >= 40 && num <= 49)) return "rain";
+    if ((num >= 20 && num <= 29) || (num >= 50 && num <= 59)) return "storm";
+    if ((num >= 30 && num <= 39) || (num >= 60 && num <= 69)) return "snow";
+    if (num >= 70 && num <= 79) return "fog";
+    return "unknown";
+  }
+  const getWeatherIcon = (code) => {
+    const condition = getWeatherCategory(code);
+
     switch (condition) {
-      case "sunny":
-        return <Sun className="w-6 h-6 text-yellow-500" />;
+      case "clear":
+        return <Sun className="w-6 h-6 text-yellow-400" />;
+      case "partly_cloudy":
+        return <Cloud className="w-6 h-6 text-yellow-200" />;
       case "cloudy":
-        return <Cloud className="w-6 h-6 text-white" />;
+        return <Cloud className="w-6 h-6 text-gray-400" />;
       case "rain":
-        return <CloudRain className="w-6 h-6 text-blue-500" />;
-      case "snow":
-        return <CloudSnow className="w-6 h-6 text-sky-400" />;
+        return <CloudRain className="w-6 h-6 text-blue-400" />;
       case "storm":
         return <CloudLightning className="w-6 h-6 text-purple-500" />;
+      case "snow":
+        return <CloudSnow className="w-6 h-6 text-sky-300" />;
+      case "fog":
+        return <CloudFog className="w-6 h-6 text-gray-300" />;
       default:
         return <Cloud className="w-6 h-6 text-white" />;
     }
   };
-
-  // Sample data for demonstration
-  const sampleData = [
-    { time: "12PM", condition: "sunny", temp: 28 },
-    { time: "1PM", condition: "cloudy", temp: 26 },
-    { time: "2PM", condition: "rain", temp: 24 },
-    { time: "3PM", condition: "sunny", temp: 27 },
-    { time: "4PM", condition: "cloudy", temp: 25 },
-    { time: "5PM", condition: "sunny", temp: 29 },
-  ];
-
-  const hourlyData = data.length > 0 ? data : sampleData;
 
   return (
     <div className="mx-4 mb-4">
@@ -60,7 +68,7 @@ const Hourly = ({ data = [] }) => {
                 minute: "2-digit",
               })}
             </span>
-            <div className="my-1">{getWeatherIcon(hour.condition)}</div>
+            <div className="my-1">{getWeatherIcon(hour.weatherSymbol)}</div>
             <span className="text-lg font-semibold text-[#f2f2f2]">
               {hour.temperature}°
             </span>
