@@ -10,6 +10,7 @@ export function useCurrentWeather() {
     const { coordinates, error: geoError, usingDefault} = useGeolocation();
     const [currentWeather, setCurrentWeather] = useState({});
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [locationUsed, setLocationUsed] = useState(defaultLocation.name);
 
     useEffect(() => {
@@ -31,6 +32,7 @@ export function useCurrentWeather() {
         } 
 
         setLocationUsed(locationLabel);
+        setLoading(true);
 
         fetchCurrentWeather(latitude, longitude)
             .then(data => {
@@ -38,8 +40,11 @@ export function useCurrentWeather() {
             })
             .catch(err => {
                 setError(err.message);
+            })
+            .finally(() => {
+                setLoading(false);
             });
-    }, [coordinates]);
+    }, [coordinates, geoError, usingDefault]);
 
-    return {currentWeather, error: error || geoError, locationUsed, usingDefault};
+    return {currentWeather, error: error || geoError, locationUsed, usingDefault, loading};
 }

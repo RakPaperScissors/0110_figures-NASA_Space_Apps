@@ -1,9 +1,8 @@
 import React from "react";
 import { useCurrentWeather } from '../hooks/useCurrent';
+import LoadingSpinner from "../components/LoadingSpinner";
 
-const CurrentForecast = () => {
-  const { currentWeather, error, locationUsed, usingDefault } = useCurrentWeather();
-
+const CurrentForecast = ({ currentWeather, locationUsed, usingDefault }) => {
   const getWeatherQuote = (code) => {
     const num = Number(code);
     if ([0, 1].includes(num)) return "Clear skies ahead ☀️";

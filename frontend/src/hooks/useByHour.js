@@ -8,6 +8,7 @@ export function useWeatherByHour() {
     const { coordinates, error: geoError, usingDefault} = useGeolocation();
     const [weatherByHour, setWeatherByHour] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [locationUsed, setLocationUsed] = useState(defaultLocation.name);
 
     useEffect(() => {
@@ -28,6 +29,8 @@ export function useWeatherByHour() {
             locationLabel = defaultLocation.name;
         } 
 
+        setLoading(true);
+
         fetchWeatherByHour(latitude, longitude)
             .then(data => {
                 setWeatherByHour(data);
@@ -35,8 +38,11 @@ export function useWeatherByHour() {
             })
             .catch(err => {
                 setError(err.message);
+            })
+            .finally(() => {
+                setLoading(false);
             });
     }, [coordinates]);
 
-    return {weatherByHour, setWeatherByHour, error};
+    return {weatherByHour, setWeatherByHour, error, loading};
 }

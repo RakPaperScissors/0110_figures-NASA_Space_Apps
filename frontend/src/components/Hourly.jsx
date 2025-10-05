@@ -8,9 +8,9 @@ import {
   CloudFog,
 } from "lucide-react";
 import { useWeatherByHour } from "../hooks/useByHour";
+import LoadingSpinner from "./LoadingSpinner";
 
-const Hourly = ({ data = [] }) => {
-  const { weatherByHour, error } = useWeatherByHour();
+const Hourly = ({ weatherByHour }) => {
   console.log("Weather by hour sample:", weatherByHour?.[0]);
   
   const getWeatherCategory = (code) => {
@@ -23,7 +23,7 @@ const Hourly = ({ data = [] }) => {
     if ((num >= 20 && num <= 29) || (num >= 50 && num <= 59)) return "storm";
     if ((num >= 30 && num <= 39) || (num >= 60 && num <= 69)) return "snow";
     if (num >= 70 && num <= 79) return "fog";
-    if (num >= 80) return "clear";
+    if (num >= 80) return "cloudy";
     return "unknown";
   }
   const getWeatherIcon = (code) => {
