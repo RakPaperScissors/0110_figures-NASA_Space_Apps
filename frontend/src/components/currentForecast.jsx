@@ -13,6 +13,7 @@ const CurrentForecast = ({ currentWeather, locationUsed, usingDefault }) => {
     if ([71, 73, 75, 77, 85, 86].includes(num)) return "Snowy weather ❄️";
     if ([80, 81, 82].includes(num)) return "Scattered showers ☔";
     if ([95, 96, 99].includes(num)) return "Thunderstorms in the area ⚡";
+    if ([100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 199].includes(num)) return "No significant weather observed."
     return "Weather data unavailable.";
   };
 
@@ -27,6 +28,7 @@ const CurrentForecast = ({ currentWeather, locationUsed, usingDefault }) => {
     // if ([71, 73, 75, 77, 85, 86].includes(num)) return "/snow.svg";
     if ([80, 81, 82].includes(num)) return "/rain_showers_sunny.svg";
     if ([95, 96, 99].includes(num)) return "/thunderstorm.svg";
+    if ([100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 199].includes(num)) return "clear_sky.svg"
     return "/sunny.svg";
   }
 
