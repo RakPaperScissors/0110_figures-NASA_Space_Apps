@@ -1,7 +1,7 @@
 const username = import.meta.env.VITE_API_USERNAME;
 const password = import.meta.env.VITE_API_PASSWORD;
-const latitude = '7.0647';
-const longitude = '125.6088';
+// const latitude = '7.0647';
+// const longitude = '125.6088';
 
 const startDate = new Date();
 startDate.setHours(0, 0, 0, 0);
@@ -11,19 +11,17 @@ const startTime = startDate.toISOString();
 const endTime = endDate.toISOString();
 const timeRange = `${startTime}--${endTime}:P1D`;
 
-const dailyParameters = [
+export async function fetchForecast(latitude, longitude) {
+  const dailyParameters = [
   'weather_symbol_24h:idx',
   't_min_2m_24h:C',
   't_max_2m_24h:C',
   'precip_24h:mm'
-].join(',');
+  ].join(',');
 
-const dailyApiUrl = `https://api.meteomatics.com/${timeRange}/${dailyParameters}/${latitude},${longitude}/json`;
+  const dailyApiUrl = `https://api.meteomatics.com/${timeRange}/${dailyParameters}/${latitude},${longitude}/json`;
+  const auth = 'Basic ' + btoa(`${username}:${password}`);
 
-// Use Buffer for Node.js instead of btoa
-const auth = 'Basic ' + btoa(`${username}:${password}`);
-
-export async function fetchForecast() {
   try {
       const response = await fetch(dailyApiUrl, {
         method: 'GET',
