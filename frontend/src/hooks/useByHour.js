@@ -4,17 +4,22 @@ import { useGeolocation } from "./useGeolocation";
 
 // Default location if user blocks or denies access
 const defaultLocation = { latitude: 14.5995, longitude: 120.9842, name: "Manila, Philippines" };
-export function useWeatherByHour() {
+export function useWeatherByHour(pinnedCoords = null) {
     const { coordinates, error: geoError, usingDefault} = useGeolocation();
     const [weatherByHour, setWeatherByHour] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [locationUsed, setLocationUsed] = useState(defaultLocation.name);
 
     useEffect(() => {
         if (!coordinates && !geoError) return;
         let latitude, longitude, locationLabel;
 
-        if(coordinates) {
+        if(pinnedCoords) {
+            latitude = pinnedCoords.lat;
+            longitude = pinnedCoords.lon;
+            locationLabel = "Pinned Location";
+        } else if(coordinates) {
             latitude = coordinates.latitude;
             longitude = coordinates.longitude;
             if (usingDefault) {
@@ -22,11 +27,15 @@ export function useWeatherByHour() {
             } else {
                 locationLabel = "Your location";
             }
-        } else {
+        } else if (geoError) {
             latitude = defaultLocation.latitude;
             longitude = defaultLocation.longitude;
             locationLabel = defaultLocation.name;
-        } 
+        } else {
+            return;
+        }
+
+        setLoading(true);
 
         fetchWeatherByHour(latitude, longitude)
             .then(data => {
@@ -35,8 +44,11 @@ export function useWeatherByHour() {
             })
             .catch(err => {
                 setError(err.message);
+            })
+            .finally(() => {
+                setLoading(false);
             });
-    }, [coordinates]);
+    }, [coordinates, geoError, usingDefault, pinnedCoords]);
 
-    return {weatherByHour, setWeatherByHour, error};
+    return {weatherByHour, setWeatherByHour, error: error || geoError, loading};
 }

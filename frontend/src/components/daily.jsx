@@ -8,9 +8,7 @@ import {
 } from "lucide-react";
 import { useForecast } from "../hooks/useForecast";
 
-const Daily = ({ data = [] }) => {
-  const { forecast, error } = useForecast();
-
+const Daily = ({ forecast }) => {
   const getWeatherCategory = (code) => {
     const num = Number(code);
     if ([0, 1].includes(num)) return "sunny";

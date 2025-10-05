@@ -1,5 +1,4 @@
 import React from "react";
-import { useCurrentWeather } from "../hooks/useCurrent";
 
 // Helper functions for interpretations
 const getPrecipitationInterpretation = (value) => {
@@ -56,9 +55,7 @@ const GlassTile = ({ title, value }) => {
 };
 
 // Container for all tiles
-const GlassContainer = () => {
-  const { currentWeather, error } = useCurrentWeather();
-
+const GlassContainer = ({ currentWeather }) => {
   return (
     <div
       className="p-4 grid grid-cols-2 gap-4
