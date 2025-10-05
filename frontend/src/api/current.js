@@ -51,23 +51,28 @@ export async function fetchCurrentWeather(latitude, longitude) {
     }
 
     const data = await response.json();
-
-    const tempParam = data.data.find(p => p.parameter === 't_2m:C');
-    const humidityParam = data.data.find(p => p.parameter === 'relative_humidity_2m:p');
-
-    const temperature = tempParam?.coordinates?.[0]?.dates?.[0]?.value;
-    const humidity = humidityParam?.coordinates?.[0]?.dates?.[0]?.value;
-
-    if (temperature == null || humidity == null) {
-      console.warn('Temperature or humidity missing in API response', { temperature, humidity });
+    const weather = {};
+    
+    for (const param of data.data) {
+      const value = param.coordinates[0].dates[0].value;
+      switch(param.parameter) {
+        case 't_2m:C': weather.temperature = value; break;
+        case 'weather_symbol_1h:idx': weather.weatherSymbol = value; break;
+        case 'relative_humidity_2m:p': weather.humidity = value; break;
+        case 'wind_speed_10m:ms': weather.windSpeed = value; break;
+        case 'precip_1h:mm': weather.precipitation = value; break;
+        case 'uv:idx': weather.uvIndex = value; break;
+        case 'sunrise:sql': weather.sunrise = value; break;
+        case 'sunset:sql': weather.sunset = value; break;
+        case 'msl_pressure:hPa': weather.pressure = value; break;
+      }
     }
 
-    const feelsLikeTemp = calculateHeatIndex(temperature ?? 0, humidity ?? 0);
-    data.calculated_feels_like_C = feelsLikeTemp;
+    weather.feelsLike = calculateHeatIndex(weather.temperature, weather.humidity);
 
     console.log('Current Weather Data (with calculated Feels Like):');
     console.log(JSON.stringify(data, null, 2));
-    return data;
+    return weather;
   } catch (error) {
     console.error('Error fetching current weather:', error);
     throw error;

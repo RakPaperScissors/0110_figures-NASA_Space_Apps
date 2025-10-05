@@ -29,7 +29,7 @@ function App() {
 
       <section>
         <h3>Current Weather</h3>
-        <p>Temperature: {currentWeather?.calculated_feels_like_C}°C</p>
+        <p>Temperature: {currentWeather.temperature?.toFixed(0)}°C</p>
       </section>
 
       <section>
