@@ -23,6 +23,7 @@ const Hourly = ({ data = [] }) => {
     if ((num >= 20 && num <= 29) || (num >= 50 && num <= 59)) return "storm";
     if ((num >= 30 && num <= 39) || (num >= 60 && num <= 69)) return "snow";
     if (num >= 70 && num <= 79) return "fog";
+    if (num >= 80) return "clear";
     return "unknown";
   }
   const getWeatherIcon = (code) => {
@@ -32,7 +33,7 @@ const Hourly = ({ data = [] }) => {
       case "clear":
         return <Sun className="w-6 h-6 text-yellow-400" />;
       case "partly_cloudy":
-        return <Cloud className="w-6 h-6 text-yellow-200" />;
+        return <Cloud className="w-6 h-6 text-gray-200" />;
       case "cloudy":
         return <Cloud className="w-6 h-6 text-gray-400" />;
       case "rain":
@@ -58,6 +59,7 @@ const Hourly = ({ data = [] }) => {
         relative overflow-hidden flex snap-x"
       >
         {weatherByHour.map((hour, index) => (
+          
           <div
             key={index}
             className="flex flex-col items-center justify-center min-w-[90px] p-3 snap-center"
