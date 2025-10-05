@@ -1,6 +1,8 @@
 import React from "react";
+import { useCurrentWeather } from '../hooks/useCurrent';
 
 const CurrentForecast = () => {
+  const { currentWeather, error, locationUsed, usingDefault } = useCurrentWeather();
   return (
     <div
       className="flex flex-col items-center justify-center w-full text-[#f2f2f2] font-[Manrope] py-5 mt-10"
@@ -8,7 +10,10 @@ const CurrentForecast = () => {
     >
       {" "}
       {/* LOCATION */}
-      <h1 className="text-[24px] font-bold">Davao City</h1>
+      <h1 className="text-[24px] font-bold">
+        {locationUsed}
+      </h1>
+      {usingDefault && <span>(default)</span>}
       {/* ICON */}
       <div className="w-[100px] h-[100px] flex items-center justify-center mt-2 mb-2">
         <img
@@ -19,7 +24,7 @@ const CurrentForecast = () => {
       </div>
       {/* TEMP */}
       <h2 className="text-[40px] font-extrabold">
-        28 <span className="font-normal">°C</span>
+        {currentWeather.temperature?.toFixed(0)} <span className="font-normal">°C</span>
       </h2>
       {/* QUOTE */}
       <p className="text-[16px] mt-2">Mostly Cloudy</p>

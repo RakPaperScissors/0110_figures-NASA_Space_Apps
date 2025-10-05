@@ -33,8 +33,6 @@ export async function fetchCurrentWeather(latitude, longitude) {
   'sunrise:sql',
   'sunset:sql',
   'msl_pressure:hPa',
-  'air_quality:idx',
-  'visibility:m'
   ].join(',');
 
   const nowApiUrl = `https://api.meteomatics.com/now/${nowParameters}/${latitude},${longitude}/json`;
@@ -67,8 +65,6 @@ export async function fetchCurrentWeather(latitude, longitude) {
         case 'sunrise:sql': weather.sunrise = value; break;
         case 'sunset:sql': weather.sunset = value; break;
         case 'msl_pressure:hPa': weather.pressure = value; break;
-        case 'air_quality:idx': weather.airQuality = value; break;
-        case 'visibility:m': weather.visibility = value; break;
       }
     }
 
