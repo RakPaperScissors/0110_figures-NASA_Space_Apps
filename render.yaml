@@ -1,0 +1,59 @@
+services:
+  # Backend API Service
+  - type: web
+    name: nasa-flood-backend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_HOST
+        sync: false
+      - key: DATABASE_PORT
+        value: 5432
+      - key: DATABASE_USER
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: DATABASE_NAME
+        sync: false
+      - key: METEOMATICS_USERNAME
+        value: buhayan_joseph
+      - key: METEOMATICS_PASSWORD
+        value: m49Ci4rQ0obS5zP72u37
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: nasa-flood-frontend
+          property: host
+    healthCheckPath: /marks/active
+
+  # Frontend Static Site
+  - type: web
+    name: nasa-flood-frontend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run preview
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: nasa-flood-backend
+          property: host
+      - key: VITE_API_USERNAME
+        value: buhayan_joseph
+      - key: VITE_API_PASSWORD
+        value: m49Ci4rQ0obS5zP72u37

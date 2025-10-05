@@ -1,12 +1,10 @@
-import 'dotenv/config'; // Loads environment variables from .env file
-
-const username = process.env.VITE_API_USERNAME;
-const password = process.env.VITE_API_PASSWORD;
+const username = import.meta.env.VITE_API_USERNAME;
+const password = import.meta.env.VITE_API_PASSWORD;
 const latitude = '7.0647';
 const longitude = '125.6088';
 
 const startDate = new Date();
-startDate.setUTCHours(0, 0, 0, 0);
+startDate.setHours(0, 0, 0, 0);
 const endDate = new Date(startDate);
 endDate.setDate(startDate.getDate() + 7);
 const startTime = startDate.toISOString();
@@ -23,24 +21,49 @@ const dailyParameters = [
 const dailyApiUrl = `https://api.meteomatics.com/${timeRange}/${dailyParameters}/${latitude},${longitude}/json`;
 
 // Use Buffer for Node.js instead of btoa
-const auth = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
+const auth = 'Basic ' + btoa(`${username}:${password}`);
 
-fetch(dailyApiUrl, {
-  method: 'GET',
-  headers: {
-    'Authorization': auth
+export async function fetchForecast() {
+  try {
+      const response = await fetch(dailyApiUrl, {
+        method: 'GET',
+        headers: {
+        'Authorization': auth
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const rawData = await response.json();
+    const times = rawData.data[0].coordinates[0].dates.map(d => d.date);
+    const dailyData = times.map((day, index) => {
+      const object = { day };
+
+      rawData.data.forEach(param => {
+        const value = param.coordinates[0].dates[index].value;
+        switch(param.parameter) {
+          case 'weather_symbol_24h:idx':
+            object.weatherSymbol = value;
+            break;
+          case 't_min_2m_24h:C':
+            object.minTemperature = value;
+            break;
+          case 't_max_2m_24h:C':
+            object.maxTemperature = value;
+            break;
+          case 'precip_24h:mm':
+            object.precipitation = value;
+            break;
+        }
+      });
+
+      return object;
+    })
+    console.log('Daily forcast data: ', dailyData);
+    return dailyData;
+  } catch (error) {
+    console.error('Error fetching forecast:', error);
+    throw error;
   }
-})
-.then(response => {
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  return response.json();
-})
-.then(data => {
-  // Pretty-print the full JSON object to your terminal
-  console.log('7-Day Forecast Data:', JSON.stringify(data, null, 2));
-})
-.catch(error => {
-  console.error('Error fetching 7-day forecast:', error);
-});
+}
