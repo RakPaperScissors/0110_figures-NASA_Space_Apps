@@ -3,7 +3,7 @@ import React from "react";
 const CurrentForecast = () => {
   return (
     <div
-      className="flex flex-col items-center justify-center w-full text-[#f2f2f2] font-[Manrope] py-8 mt-10"
+      className="flex flex-col items-center justify-center w-full text-[#f2f2f2] font-[Manrope] py-5 mt-10"
       style={{ textShadow: "0 1px 3px rgba(0,0,0,0.25)" }}
     >
       {" "}
