@@ -1,4 +1,4 @@
-import { IsEnum, IsLatitude, IsLongitude, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsEnum, IsLatitude, IsLongitude, IsOptional, IsString } from 'class-validator';
 import { SeverityLevel } from 'src/database/enums/severity-level.enum';
 
 export class CreateFloodMarkDto {
@@ -7,10 +7,6 @@ export class CreateFloodMarkDto {
 
   @IsLongitude()
   longitude: number;
-
-  @IsUrl()
-  @IsNotEmpty()
-  imageUrl: string;
 
   @IsEnum(SeverityLevel)
   severity: SeverityLevel;

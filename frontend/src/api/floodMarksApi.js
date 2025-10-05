@@ -32,11 +32,13 @@ export const createFloodMark = async (markData, imageFile) => {
 
   formData.append('image', imageFile);
 
+  const username = localStorage.getItem('username') || '';
+
   const response = await fetch(`${API_URL}/marks`, {
     method: 'POST',
     headers: {
       'X-Device-ID': getDeviceId(),
-      'X-Username': localStorage.getItem('username') || '',
+      'X-Username': username,
     },
     body: formData,
   });

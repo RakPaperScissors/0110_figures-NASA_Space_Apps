@@ -35,7 +35,10 @@ function MapComponent() {
   const [newMarkPosition, setNewMarkPosition] = useState(null);
   const handleMapClick = useCallback((latlng) => { setNewMarkPosition(latlng); }, []);
   const handleCloseForm = () => { setNewMarkPosition(null); };
-  const handleMarkAdded = () => { refetchFloodMarks(); };
+  const handleMarkAdded = () => { 
+    setNewMarkPosition(null); // Close the form
+    refetchFloodMarks(); // Refresh the marks to show the new one
+  };
 
   const today = new Date().toISOString().split('T')[0];
   const nasaGibsUrl = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/${today}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`;

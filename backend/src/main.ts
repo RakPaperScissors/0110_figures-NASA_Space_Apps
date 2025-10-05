@@ -4,16 +4,12 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Get frontend URL from environment variable for production
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-  
+  // Enable CORS for local development
   app.enableCors({
     origin: [
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:3000',
-      frontendUrl, // Railway frontend URL
-      /^https?:\/\/.*\.railway\.app$/, // Allow all Railway apps
       /^http:\/\/192\.168\.\d+\.\d+:(5173|5174)$/, // Allow local network
       /^http:\/\/10\.\d+\.\d+\.\d+:(5173|5174)$/, // Allow local network
     ],
@@ -22,8 +18,8 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Device-ID', 'X-Username'],
   });
   
-  const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0'); // Bind to 0.0.0.0 for Railway
-  console.log(`Application is running on port ${port}`);
+  const port = 3000;
+  await app.listen(port);
+  console.log(`Application is running on http://localhost:${port}`);
 }
 bootstrap();
