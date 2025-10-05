@@ -10,8 +10,8 @@ export default defineConfig({
     port: 5173,
   },
   preview: {
-    host: '0.0.0.0', // Required for Railway
-    port: process.env.PORT || 4173,
+    host: true, // For local development
+    port: 4173,
   },
   test: {
     globals: true,

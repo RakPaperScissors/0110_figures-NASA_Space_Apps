@@ -6,7 +6,7 @@ import { Report } from './entities/report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { FloodMark } from '../flood_marks/entities/flood_mark.entity';
 
-const FAKE_REPORT_THRESHOLD = 5;
+const FAKE_REPORT_THRESHOLD = 3;
 const TRUST_SCORE_PENALTY = 25;
 const DELETION_TRUST_THRESHOLD = 50;
 
@@ -44,18 +44,14 @@ export class ReportsService {
             // Increment the fake report count on the post
             post.fakeReportCount = (post.fakeReportCount || 0) + 1;
             
-            // Check if the report count exceeds the threshold
+            // Check if the report count exceeds the threshold (3 reports)
             if (post.fakeReportCount >= FAKE_REPORT_THRESHOLD) {
-                const floodMark = post.floodMark;
-                floodMark.trustScore -= TRUST_SCORE_PENALTY;
-
-                // If trust score is too low, delete the whole mark
-                if (floodMark.trustScore < DELETION_TRUST_THRESHOLD) {
-                    await manager.remove(floodMark); // This will cascade delete posts and reports
-                    return { message: `Flood mark ${floodMark.id} deleted due to low trust score.` };
-                } else {
-                    await manager.save(floodMark);
-                }
+                // Flag the post as reported - it will be hidden from frontend
+                return { 
+                    ...report, 
+                    message: `Post has been flagged after ${FAKE_REPORT_THRESHOLD} reports and will be hidden.`,
+                    postFlagged: true
+                };
             }
             
             await manager.save(post);
