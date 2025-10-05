@@ -7,7 +7,8 @@ const getDeviceId = () => {
   return deviceId;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Remove trailing slash from API_URL to prevent double slashes
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 console.log('API_URL configured as:', API_URL);
 
