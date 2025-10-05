@@ -1,4 +1,5 @@
 import React from "react";
+import { useCurrentWeather } from "../hooks/useCurrent";
 
 // Single Tile Component
 const GlassTile = ({ title, value }) => {
@@ -15,27 +16,26 @@ const GlassTile = ({ title, value }) => {
 
 // Container for all tiles
 const GlassContainer = () => {
-  const weatherData = [
-    { title: "UV Index", value: "3" },
-    { title: "Precipitation", value: "20%" },
-    { title: "Humidity", value: "65%" },
-    { title: "Wind Speed", value: "12 km/h" },
-    { title: "Wind Direction", value: "NE" },
-    { title: "Visibility", value: "10 km" },
-    { title: "Air Quality", value: "Good" },
-    { title: "Air Pressure", value: "1012 hPa" },
-    { title: "Sunrise", value: "6:15 AM" },
-    { title: "Sunset", value: "5:45 PM" },
-  ];
+  const { currentWeather, error } = useCurrentWeather();
 
   return (
     <div
       className="p-4 grid grid-cols-2 gap-4
                  ]"
     >
-      {weatherData.map((item, index) => (
-        <GlassTile key={index} title={item.title} value={item.value} />
-      ))}
+      <GlassTile title={"UV Index"} value={currentWeather.uvIndex} />
+      <GlassTile title={"Precipitation"} value={`${currentWeather.precipitation}%`} />
+      <GlassTile title={"Humidity"} value={`${currentWeather.humidity}%`} />
+      <GlassTile title={"Wind Speed"} value={`${currentWeather.windSpeed} ms/s`} />
+      <GlassTile title={"Atmospheric Pressure"} value={`${currentWeather.pressure} hPa`} />
+      <GlassTile title={"Sunrise"} value={new Date(currentWeather.sunrise).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })} />
+      <GlassTile title={"Sunset"} value={new Date(currentWeather.sunset).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })} />
     </div>
   );
 };
