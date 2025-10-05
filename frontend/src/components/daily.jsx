@@ -55,7 +55,7 @@ const Daily = ({ data = [] }) => {
 
     return {
       day: localDay,
-      condition: getWeatherCategory(d.weatherSymbol),
+      condition: getWeatherCategory(d.precipitation),
       precipitation: d.precipitation ?? 0,
       min: d.minTemperature,
       max: d.maxTemperature,
