@@ -3,7 +3,7 @@ import { CloudSun, MapPin } from "lucide-react";
 
 const BottomNav = () => {
   return (
-<nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-72 bg-[#f2f2f2]/10 backdrop-blur-xl rounded-full shadow-[0_2px_20px_rgba(0,0,0,0.08) z-10 border border-white/20">
+<nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-72 bg-[#f2f2f2]/10 backdrop-blur-xl rounded-full shadow-[0_2px_20px_rgba(0,0,0,0.08)] z-10 border border-white/20">
       <div className="flex justify-around items-center h-16">
         {/* Weather Tab */}
         <button className="flex flex-col items-center text-white">
