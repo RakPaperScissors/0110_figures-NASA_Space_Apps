@@ -1,31 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import CurrentForecast from "../components/currentForecast";
 import Hourly from "../components/Hourly";
 import Daily from "../components/daily";
 import GlassContainer from "../components/GlassTile";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { useCurrentWeather } from "../hooks/useCurrent";
+import LocationPicker from "../components/map";
+import { useCurrentWeather } from "../hooks/useCurrent"; 
 import { useWeatherByHour } from "../hooks/useByHour";
 import { useForecast } from "../hooks/useForecast";
 
 const Homepage = () => {
-  const {
-    currentWeather,
-    error: currentWeatherError,
-    loading: currentWeatherLoading,
-    locationUsed,
-    usingDefault,
-  } = useCurrentWeather();
-  const {
-    weatherByHour,
-    error: weatherByHourError,
-    loading: weatherByHourLoading,
-  } = useWeatherByHour();
-  const {
-    forecast,
-    error: forecastError,
-    loading: forecastLoading,
-  } = useForecast();
+  const [coords, setCoords] = useState(null);
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const { currentWeather, error: currentWeatherError, loading: currentWeatherLoading, locationUsed, usingDefault } = useCurrentWeather(coords);
+  const { weatherByHour, error: weatherByHourError, loading: weatherByHourLoading } = useWeatherByHour(coords);
+  const { forecast, error: forecastError, loading: forecastLoading } = useForecast(coords);
+
+  const handleLocationChange = (location) => {
+    setCoords(location);
+    setIsMapOpen(false);
+  };
 
   if (currentWeatherLoading || weatherByHourLoading || forecastLoading) {
     return <LoadingSpinner />;
@@ -70,8 +64,49 @@ const Homepage = () => {
   // --- end background logic ---
 
   return (
-    <div className={`w-full min-h-full flex flex-col ${bgClass}`}>
-      <CurrentForecast
+    <div className="w-full min-h-full flex flex-col bg-gradient-to-br from-[#2d3748] to-[#6d85ae]">
+      {/* 🟢 Button to open the map */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setIsMapOpen(true)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+        >
+          📍 Select Location
+        </button>
+      </div>
+
+      {/* 🪟 Modal popup */}
+      {isMapOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-4 w-[90%] max-w-xl relative shadow-lg">
+            {/* Close button */}
+            <button
+              onClick={() => setIsMapOpen(false)}
+              className="absolute top-2 right-3 text-gray-500 hover:text-black text-lg font-bold"
+            >
+              ×
+            </button>
+
+            <h2 className="text-center font-semibold mb-2">Select a location on the map</h2>
+
+            {/* 🗺️ Leaflet map */}
+            <div className="rounded overflow-hidden">
+              <LocationPicker onLocationChange={handleLocationChange} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Display selected coordinates */}
+      {coords && (
+        <div className="mt-4 text-center text-white">
+          <p>📍 Selected Location:</p>
+          <p>Latitude: {coords.lat.toFixed(4)}</p>
+          <p>Longitude: {coords.lon.toFixed(4)}</p>
+        </div>
+      )}
+
+      <CurrentForecast 
         currentWeather={currentWeather}
         locationUsed={locationUsed}
         usingDefault={usingDefault}

@@ -1,5 +1,4 @@
 import React from "react";
-import { useCurrentWeather } from "../hooks/useCurrent";
 
 // Helper functions for interpretations
 const getPrecipitationInterpretation = (value) => {

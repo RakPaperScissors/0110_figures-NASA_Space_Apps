@@ -5,7 +5,7 @@ import { useGeolocation } from "./useGeolocation";
 // Default location if user blocks or denies access
 const defaultLocation = { latitude: 14.5995, longitude: 120.9842, name: "Manila, Philippines" };
 
-export function useForecast() {
+export function useForecast(pinnedCoords = null) {
     const { coordinates, error: geoError, usingDefault} = useGeolocation();
     const [forecast, setForecast] = useState([]);
     const [error, setError] = useState(null);
@@ -15,7 +15,11 @@ export function useForecast() {
         if (!coordinates && !geoError) return;
         let latitude, longitude, locationLabel;
 
-        if(coordinates) {
+        if(pinnedCoords) {
+            latitude = pinnedCoords.latitude;
+            longitude = pinnedCoords.longitude;
+            locationLabel = "Pinned Location";
+        } else if(coordinates) {
             latitude = coordinates.latitude;
             longitude = coordinates.longitude;
             if (usingDefault) {
@@ -23,11 +27,13 @@ export function useForecast() {
             } else {
                 locationLabel = "Your location";
             }
-        } else {
+        } else if (geoError) {
             latitude = defaultLocation.latitude;
             longitude = defaultLocation.longitude;
             locationLabel = defaultLocation.name;
-        } 
+        } else {
+            return;
+        }
 
         setLocationUsed(locationLabel);
 
@@ -39,7 +45,7 @@ export function useForecast() {
             .catch(err => {
                 setError(err.message);
             });
-    }, [coordinates]);
+    }, [coordinates, pinnedCoords]);
 
     return {forecast, error}
 }

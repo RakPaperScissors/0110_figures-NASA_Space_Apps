@@ -6,7 +6,7 @@ import { useGeolocation } from "./useGeolocation";
 // Default location if user blocks or denies access
 const defaultLocation = { latitude: 14.5995, longitude: 120.9842, name: "Manila, Philippines" };
 
-export function useCurrentWeather() {
+export function useCurrentWeather(pinnedCoords = null) {
     const { coordinates, error: geoError, usingDefault} = useGeolocation();
     const [currentWeather, setCurrentWeather] = useState({});
     const [error, setError] = useState(null);
@@ -17,7 +17,11 @@ export function useCurrentWeather() {
         if (!coordinates && !geoError) return;
         let latitude, longitude, locationLabel;
 
-        if(coordinates) {
+        if(pinnedCoords) {
+            latitude = pinnedCoords.latitude;
+            longitude = pinnedCoords.longitude;
+            locationLabel = "Pinned Location";
+        } else if(coordinates) {
             latitude = coordinates.latitude;
             longitude = coordinates.longitude;
             if (usingDefault) {
@@ -25,11 +29,13 @@ export function useCurrentWeather() {
             } else {
                 locationLabel = "Your location";
             }
-        } else {
+        } else if(geoError) {
             latitude = defaultLocation.latitude;
             longitude = defaultLocation.longitude;
             locationLabel = defaultLocation.name;
-        } 
+        } else {
+            return;
+        }
 
         setLocationUsed(locationLabel);
         setLoading(true);
@@ -44,7 +50,7 @@ export function useCurrentWeather() {
             .finally(() => {
                 setLoading(false);
             });
-    }, [coordinates, geoError, usingDefault]);
+    }, [coordinates, geoError, usingDefault, pinnedCoords]);
 
     return {currentWeather, error: error || geoError, locationUsed, usingDefault, loading};
 }
