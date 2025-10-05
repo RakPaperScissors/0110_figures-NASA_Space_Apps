@@ -5,7 +5,6 @@ function AddMarkForm({ position, onClose, onMarkAdded }) {
   const [imageFile, setImageFile] = useState(null);
   const [severity, setSeverity] = useState('low');
   const [notes, setNotes] = useState('');
-  const [username, setUsername] = useState(localStorage.getItem('username') || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -21,18 +20,13 @@ function AddMarkForm({ position, onClose, onMarkAdded }) {
     setError(null);
     if (!imageFile) {
       setError("An image is required.");
-      setIsSubmitting(false);
       return;
     }
     try {
-      // Save username to localStorage for future use
-      if (username.trim()) {
-        localStorage.setItem('username', username.trim());
-      }
-      
       const markData = {
         latitude: position.lat,
         longitude: position.lng,
+        imageUrl,
         severity,
         notes,
       };
@@ -50,16 +44,6 @@ function AddMarkForm({ position, onClose, onMarkAdded }) {
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] bg-white text-gray-800 p-6 rounded-lg shadow-2xl w-80">
       <h3 className="text-xl font-bold mb-4">Report a New Flood</h3>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold">Your Name (Optional)</label>
-          <input 
-            type="text" 
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            placeholder="Enter your name"
-            className="w-full p-2 border rounded text-black"
-          />
-        </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Take or Upload Photo</label>
           <input 

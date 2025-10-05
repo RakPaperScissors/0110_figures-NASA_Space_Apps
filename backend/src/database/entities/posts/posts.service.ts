@@ -15,13 +15,7 @@ export class PostsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(
-    markId: string, 
-    createPostDto: CreatePostDto, 
-    deviceId: string,
-    imageBuffer?: Buffer,
-    username?: string,
-  ): Promise<Post> {
+  async create(markId: string, dto: CreatePostDto, deviceId: string): Promise<Post> {
     return this.dataSource.transaction(async (manager) => {
       const floodMark = await manager.findOneBy(FloodMark, { id: markId });
 
@@ -32,26 +26,12 @@ export class PostsService {
       await manager.save(floodMark);
 
       const newPost = manager.create(Post, {
-        ...createPostDto,
+        ...dto,
         deviceId,
         floodMark,
-        image: imageBuffer,
-        username,
       });
 
       return manager.save(newPost);
     });
-  }
-
-  async findOne(postId: string): Promise<Post> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-    });
-
-    if (!post) {
-      throw new NotFoundException(`Post with ID ${postId} not found`);
-    }
-
-    return post;
   }
 }

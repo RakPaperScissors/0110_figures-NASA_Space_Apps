@@ -45,7 +45,6 @@
     "@types/express": "^5.0.0",
     "@types/geojson": "^7946.0.16",
     "@types/jest": "^29.5.14",
-    "@types/multer": "^2.0.0",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
@@ -78,9 +77,6 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/$1"
-    }
+    "testEnvironment": "node"
   }
 }
