@@ -6,8 +6,21 @@ import {
   CloudSnow,
   CloudLightning,
 } from "lucide-react";
+import { useForecast } from "../hooks/useForecast";
 
 const Daily = ({ data = [] }) => {
+  const { forecast, error } = useForecast();
+
+  const getWeatherCategory = (code) => {
+    const num = Number(code);
+    if ([0, 1].includes(num)) return "sunny";
+    if ([2, 3, 4].includes(num)) return "cloudy";
+    if ((num >= 5 && num <= 19) || (num >= 40 && num <= 49)) return "rain";
+    if ((num >= 20 && num <= 29) || (num >= 50 && num <= 59)) return "storm";
+    if ((num >= 30 && num <= 39) || (num >= 60 && num <= 69)) return "snow";
+    return "cloudy"; // default fallback
+  };
+
   const getWeatherIcon = (condition) => {
     switch (condition) {
       case "sunny":
@@ -34,7 +47,20 @@ const Daily = ({ data = [] }) => {
     { day: "Friday", condition: "storm", precipitation: 70, min: 16, max: 23 },
   ];
 
-  const dailyData = data.length > 0 ? data : sampleData;
+  const dailyData = forecast.map((d) => {
+    const localDay = new Date(d.day).toLocaleDateString("en-US", {
+      weekday: "long",
+      timeZone: "Asia/Manila", // optional if you want PH time
+    });
+
+    return {
+      day: localDay,
+      condition: getWeatherCategory(d.precipitation),
+      precipitation: d.precipitation ?? 0,
+      min: d.minTemperature,
+      max: d.maxTemperature,
+    };
+  });
 
   // Find global min/max for proper range visualization scaling
   const globalMin = Math.min(...dailyData.map((d) => d.min));

@@ -1,7 +1,7 @@
 const username = import.meta.env.VITE_API_USERNAME;
 const password = import.meta.env.VITE_API_PASSWORD;
-const latitude = '7.0647';
-const longitude = '125.6088';
+// const latitude = '7.0647';
+// const longitude = '125.6088';
 
 const now = new Date();
 const tomorrow = new Date(now);
@@ -10,22 +10,19 @@ const startTime = now.toISOString();
 const endTime = tomorrow.toISOString();
 const timeRange = `${startTime}--${endTime}:PT1H`;
 
-const hourlyParameters = [
-  't_2m:C',
-  'weather_symbol_1h:idx',
-  'relative_humidity_2m:p',
-  'wind_speed_10m:ms',
-  'precip_1h:mm',
-  'uv:idx',
-  'msl_pressure:hPa'
-].join(',');
+export async function fetchWeatherByHour(latitude, longitude) {
+  const hourlyParameters = [
+    't_2m:C',
+    'weather_symbol_1h:idx',
+    'relative_humidity_2m:p',
+    'wind_speed_10m:ms',
+    'precip_1h:mm',
+    'uv:idx',
+    'msl_pressure:hPa'
+  ].join(',');
 
-const hourlyApiUrl = `https://api.meteomatics.com/${timeRange}/${hourlyParameters}/${latitude},${longitude}/json`;
-
-// Use Buffer for Node.js instead of btoa
-const auth = 'Basic ' + btoa(`${username}:${password}`);
-
-export async function fetchWeatherByHour() {
+  const hourlyApiUrl = `https://api.meteomatics.com/${timeRange}/${hourlyParameters}/${latitude},${longitude}/json`;
+  const auth = 'Basic ' + btoa(`${username}:${password}`);
   try {
     const response = await fetch(hourlyApiUrl, {
       method: 'GET',
