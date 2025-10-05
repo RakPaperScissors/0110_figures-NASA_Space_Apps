@@ -1,11 +1,13 @@
 import React from "react";
 
-const Container = ({ children, className = "" }) => {
+const GlassContainer = ({ children }) => {
   return (
-    <div className={`container mx-auto px-4 ${className}`}>
+    <div
+      className="p-4 grid grid-cols-2 gap-4 "
+    >
       {children}
     </div>
   );
 };
 
-export default Container;
+export default GlassContainer;

@@ -11,7 +11,7 @@ function App() {
       <div className="w-[390px] h-screen bg-white text-black font-sans flex flex-col">
         
         {/* MAIN CONTENT (scrollable) */}
-        <div className="flex-1 overflow-y-auto scrollbar-hide">
+        <div className="flex-1 overflow-y-auto scrollbar-hide bg-gradient-to-br from-[#2d3748] to-[#6d85ae]">
           <Homepage />
         </div>
 
