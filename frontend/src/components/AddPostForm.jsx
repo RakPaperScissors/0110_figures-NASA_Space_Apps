@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function AddPostForm({ markId, onClose, onPostAdded }) {
   const [imageFile, setImageFile] = useState(null);
-  const [notes, setNotes] = useState('');
-  const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [notes, setNotes] = useState("");
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,29 +29,31 @@ function AddPostForm({ markId, onClose, onPostAdded }) {
     try {
       // Save username to localStorage for future use
       if (username) {
-        localStorage.setItem('username', username);
+        localStorage.setItem("username", username);
       }
 
       const formData = new FormData();
-      formData.append('notes', notes);
-      formData.append('image', imageFile);
+      formData.append("notes", notes);
+      formData.append("image", imageFile);
 
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
-      const deviceId = localStorage.getItem('deviceId') || crypto.randomUUID();
-      localStorage.setItem('deviceId', deviceId);
+      const API_URL = (
+        import.meta.env.VITE_API_URL || "http://localhost:3000"
+      ).replace(/\/$/, "");
+      const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
+      localStorage.setItem("deviceId", deviceId);
 
       const response = await fetch(`${API_URL}/posts/marks/${markId}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'X-Device-ID': deviceId,
-          'X-Username': username,
+          "X-Device-ID": deviceId,
+          "X-Username": username,
         },
         body: formData,
       });
 
       if (!response.ok) {
         const errorBody = await response.json();
-        throw new Error(errorBody.message || 'Failed to add post');
+        throw new Error(errorBody.message || "Failed to add post");
       }
 
       onPostAdded();
@@ -66,41 +70,55 @@ function AddPostForm({ markId, onClose, onPostAdded }) {
       <h3 className="text-xl font-bold mb-4">Add Update to Flood Report</h3>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block mb-1 font-semibold">Your Name (Optional)</label>
-          <input 
-            type="text" 
+          <label className="block mb-1 font-semibold">
+            Your Name (Optional)
+          </label>
+          <input
+            type="text"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your name"
             className="w-full p-2 border rounded text-black"
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-1 font-semibold">Take or Upload Photo</label>
-          <input 
-            type="file" 
-            accept="image/*" 
-            capture="environment" 
-            required 
+          <label className="block mb-1 font-semibold">
+            Take or Upload Photo
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            required
             onChange={handleFileChange}
             className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
         </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Notes (Optional)</label>
-          <textarea 
-            value={notes} 
-            onChange={e => setNotes(e.target.value)} 
-            className="w-full p-2 border rounded text-black" 
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="w-full p-2 border rounded text-black"
             rows="3"
             placeholder="Add any additional information..."
           ></textarea>
         </div>
         {error && <p className="text-red-500 mb-2">{error}</p>}
         <div className="flex justify-between">
-          <button type="button" onClick={onClose} className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-          <button type="submit" disabled={isSubmitting} className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300">
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+          <button
+            type="button"
+            onClick={onClose}
+            className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300"
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>

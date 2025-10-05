@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { createFloodMark } from '../api/floodMarksApi';
+import React, { useState } from "react";
+import { createFloodMark } from "../api/floodMarksApi";
 
 function AddMarkForm({ position, onClose, onMarkAdded }) {
   const [imageFile, setImageFile] = useState(null);
-  const [severity, setSeverity] = useState('low');
-  const [notes, setNotes] = useState('');
-  const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [severity, setSeverity] = useState("low");
+  const [notes, setNotes] = useState("");
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -26,9 +28,9 @@ function AddMarkForm({ position, onClose, onMarkAdded }) {
     try {
       // Save username to localStorage for future use
       if (username) {
-        localStorage.setItem('username', username);
+        localStorage.setItem("username", username);
       }
-      
+
       const markData = {
         latitude: position.lat,
         longitude: position.lng,
@@ -45,47 +47,94 @@ function AddMarkForm({ position, onClose, onMarkAdded }) {
   };
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] bg-white text-gray-800 p-6 rounded-lg shadow-2xl w-80">
-      <h3 className="text-xl font-bold mb-4">Report a New Flood</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold">Your Name (Optional)</label>
-          <input 
-            type="text" 
+    <div
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                    z-[1000] w-80 rounded-2xl p-6 
+                    bg-black/60 border border-white/10 
+                    backdrop-blur-md shadow-xl text-white"
+    >
+      <h3 className="text-2xl font-semibold text-center mb-5">
+        Report a Flood
+      </h3>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Name */}
+        <div>
+          <label className="text-sm block mb-1">Your name (Optional)</label>
+          <input
+            type="text"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your name"
-            className="w-full p-2 border rounded text-black"
+            className="w-full px-3 py-2 rounded-md bg-white/20 border border-white/20 
+                       placeholder-gray-300 text-white focus:outline-none focus:ring-1 focus:ring-white/40"
           />
         </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold">Take or Upload Photo</label>
-          <input 
-            type="file" 
-            accept="image/*" 
-            capture="environment" 
-            required 
+
+        <div>
+          <label className="text-sm block mb-1">Take or Upload Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            required
             onChange={handleFileChange}
-            className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="block w-full text-sm text-gray-200 
+                       file:mr-3 file:py-2 file:px-4 
+                       file:rounded-lg file:border-0 
+                       file:text-sm file:font-semibold 
+                       file:bg-[#1a202c] file:text-white"
           />
         </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold">Severity</label>
-          <select value={severity} onChange={e => setSeverity(e.target.value)} className="w-full p-2 border rounded text-black">
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+
+        <div>
+          <label className="text-sm block mb-1">Severity</label>
+          <select
+            value={severity}
+            onChange={(e) => setSeverity(e.target.value)}
+            className="w-full px-3 py-2 rounded-md bg-white/20 border border-white/20 
+                       text-white focus:outline-none focus:ring-1 focus:ring-white/40"
+          >
+            <option value="low" className="text-black">
+              Low
+            </option>
+            <option value="medium" className="text-black">
+              Medium
+            </option>
+            <option value="high" className="text-black">
+              High
+            </option>
           </select>
         </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold">Notes (Optional)</label>
-          <textarea value={notes} onChange={e => setNotes(e.target.value)} className="w-full p-2 border rounded text-black" rows="2"></textarea>
+
+        <div>
+          <label className="text-sm block mb-1">Notes (Optional)</label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows="2"
+            className="w-full px-3 py-2 rounded-md bg-white/20 border border-white/20 
+                       placeholder-gray-300 text-white focus:outline-none focus:ring-1 focus:ring-white/40"
+            placeholder="Enter additional details..."
+          ></textarea>
         </div>
-        {error && <p className="text-red-500 mb-2">{error}</p>}
-        <div className="flex justify-between">
-          <button type="button" onClick={onClose} className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-          <button type="submit" disabled={isSubmitting} className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300">
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+
+        {error && <p className="text-red-400 text-sm">{error}</p>}
+
+        <div className="flex justify-between mt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-24 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-24 py-2 rounded-lg bg-[#1a202c] text-white font-semibold"
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>
