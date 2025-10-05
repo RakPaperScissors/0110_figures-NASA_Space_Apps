@@ -28,7 +28,7 @@ const Homepage = () => {
   if (currentWeatherError || weatherByHourError || forecastError) {
     return (
       <div className="text-red-400 text-center mt-10">
-        Error loading weather data: {error}
+        Error loading weather data
       </div>
     );
   }

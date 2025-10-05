@@ -16,8 +16,8 @@ export function useForecast(pinnedCoords = null) {
         let latitude, longitude, locationLabel;
 
         if(pinnedCoords) {
-            latitude = pinnedCoords.latitude;
-            longitude = pinnedCoords.longitude;
+            latitude = pinnedCoords.lat;
+            longitude = pinnedCoords.lon;
             locationLabel = "Pinned Location";
         } else if(coordinates) {
             latitude = coordinates.latitude;
