@@ -12,8 +12,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:3000',
-      frontendUrl, // Railway frontend URL
-      /^https?:\/\/.*\.railway\.app$/, // Allow all Railway apps
+      frontendUrl,
       /^http:\/\/192\.168\.\d+\.\d+:(5173|5174)$/, // Allow local network
       /^http:\/\/10\.\d+\.\d+\.\d+:(5173|5174)$/, // Allow local network
     ],
@@ -23,7 +22,9 @@ async function bootstrap() {
   });
   
   const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0'); // Bind to 0.0.0.0 for Railway
-  console.log(`Application is running on port ${port}`);
+  // For local development, use localhost. For production (Railway/Docker), set HOST env variable to 0.0.0.0
+  const host = process.env.HOST || 'localhost';
+  await app.listen(port, host);
+  console.log(`Application is running on ${host}:${port}`);
 }
 bootstrap();
